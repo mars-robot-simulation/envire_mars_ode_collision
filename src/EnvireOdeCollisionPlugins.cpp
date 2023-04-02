@@ -170,6 +170,7 @@ namespace mars
             //std::string type = e.item->getData().getTypeString();
 
             // TODO: why we need this? since name is set in config map, check it
+            // TODO: no need default bitmask
             config["name"] = frameId;//e.item->getData().getName();
             if (!config.hasKey("bitmask"))
             {
