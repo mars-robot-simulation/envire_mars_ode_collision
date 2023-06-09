@@ -187,7 +187,7 @@ namespace mars
             //config["parentFrame"] = parentFrame;
             std::shared_ptr<DynamicObject> parent = subControl->physics->getFrame(parentFrame);
 
-            ode_collision::Object* collision = ControlCenter::collision->createObject(config, parent);
+            ode_collision::Object* collision = subControl->collision->createObject(config, parent);
             if(!collision)
             {
                 LOG_ERROR("Error creating collision object!");
