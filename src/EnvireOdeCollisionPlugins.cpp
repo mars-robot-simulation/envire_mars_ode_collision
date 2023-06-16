@@ -185,6 +185,7 @@ namespace mars
 
 
             //config["parentFrame"] = parentFrame;
+            // TODO: is DynamicObject meaningfull name? should it not bw PhysicObject?
             std::shared_ptr<DynamicObject> parent = subControl->physics->getFrame(parentFrame);
 
             ode_collision::Object* collision = subControl->collision->createObject(config, parent);
@@ -197,6 +198,13 @@ namespace mars
             envire::core::Transform t = ControlCenter::envireGraph->getTransform(parentVertex, vertex);
             collision->setPosition(t.transform.translation);
             collision->setRotation(t.transform.orientation);
+
+            // store the collision physic object in the graph
+            // TODO: this is just quick implementation
+            // TODO: add interface for CollisionObject how it was done for DynamicObject
+            std::shared_ptr<ode_collision::Object> collisionPtr(collision);
+            envire::core::Item<std::shared_ptr<ode_collision::Object>>::Ptr collisionItemPtr(new envire::core::Item<std::shared_ptr<ode_collision::Object>>(collisionPtr));
+            ControlCenter::envireGraph->addItemToFrame(frameId, collisionItemPtr);
         }
 
     } // end of namespace envire_ode_collision
