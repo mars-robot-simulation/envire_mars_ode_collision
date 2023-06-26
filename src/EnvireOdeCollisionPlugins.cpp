@@ -181,9 +181,6 @@ namespace mars
                 config["bitmask"] = (int)config["bitmask"];
             }
 
-            std::cout << "CONFIG: " << config.toJsonString() << std::endl;
-
-
             //config["parentFrame"] = parentFrame;
             // TODO: is DynamicObject meaningfull name? should it not bw PhysicObject?
             std::shared_ptr<DynamicObject> parent = subControl->physics->getFrame(parentFrame);
