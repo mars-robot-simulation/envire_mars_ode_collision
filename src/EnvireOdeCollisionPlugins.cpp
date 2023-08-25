@@ -116,9 +116,10 @@ namespace mars
             envire::base_types::geometry::Cylinder& collidable = e.item->getData();
             ConfigMap config = collidable.getFullConfigMap();
 
-            LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::base_types::geometry::Cylinder ");
+            config["extend"]["x"] = config["radius"];
+            config["extend"]["y"] = config["length"];
 
-            //createCollision(config, e.frame);
+            createCollision(config, e.frame);
         }
 
         void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Mesh>>& e)
