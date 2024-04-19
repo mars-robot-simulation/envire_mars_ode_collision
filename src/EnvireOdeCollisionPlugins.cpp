@@ -22,7 +22,6 @@
 #include <mars_ode_collision/CollisionSpace.hpp>
 #include <mars_ode_collision/objects/Object.hpp>
 
-#define SIM_CENTER_FRAME_NAME "world"
 typedef envire::core::GraphTraits::vertex_descriptor VertexDesc;
 
 namespace mars
