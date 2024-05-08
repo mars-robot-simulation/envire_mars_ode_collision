@@ -1,17 +1,11 @@
 /**
- * \file EnvireOdePhysicsPlugins.hpp
+ * \file EnvireOdeCollisionPlugins.hpp
  * \author Malte Langosz
- * \brief Plugin class to load physics representation based on envire items
+ * \brief Plugin class to load collision representation based on envire items
  *
  */
 
 #pragma once
-
-// TODO: check and clean the header includes
-
-#include <mars_interfaces/sim/PhysicsInterface.h>
-#include <mars_interfaces/sim/ControlCenter.h>
-#include <mars_utils/Vector.h>
 
 #include <lib_manager/LibInterface.hpp>
 
@@ -21,8 +15,6 @@
 #include <envire_core/events/GraphEventDispatcher.hpp>
 #include <envire_core/events/GraphItemEventDispatcher.hpp>
 
-#include <iostream>
-
 #include <envire_base_types/geometry/Box.hpp>
 #include <envire_base_types/geometry/Capsule.hpp>
 #include <envire_base_types/geometry/Cylinder.hpp>
@@ -31,13 +23,13 @@
 
 //TODO: add prismatic joint into base types and here
 
+#include <mars_interfaces/sim/PhysicsInterface.h>
+#include <mars_interfaces/sim/ControlCenter.h>
+#include <mars_utils/Vector.h>
+
+
 namespace mars
 {
-    namespace ode_physics
-    {
-        class WorldPhysicsLoader;
-    }
-
     namespace envire_ode_collision
     {
         // move the typedef to separate file
@@ -63,7 +55,7 @@ namespace mars
 
             const std::string getLibName() const override
             {
-                return std::string("envire_mars_ode_collision");
+                return std::string{"envire_mars_ode_collision"};
             }
 
             CREATE_MODULE_INFO();
@@ -75,6 +67,7 @@ namespace mars
             virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Sphere>>& e) override;
 
         private:
+            // TODO: Move to central location
             std::shared_ptr<interfaces::SubControlCenter> getControlCenter(envire::core::FrameId frame);
 
             void createCollision(configmaps::ConfigMap &config, const envire::core::FrameId &frameId);
