@@ -49,8 +49,8 @@ namespace mars
             bool done = false;
             while(!done)
             {
-                const envire::core::GraphTraits::vertex_descriptor vertex{ControlCenter::envireGraph->vertex(frame)};
-                envire::core::GraphTraits::vertex_descriptor parentVertex{ControlCenter::graphTreeView->tree[vertex].parent};
+                const auto& vertex = ControlCenter::envireGraph->vertex(frame);
+                const auto& parentVertex = ControlCenter::graphTreeView->tree[vertex].parent;
                 // todo: check if this check is correct
                 if(parentVertex)
                 {
@@ -58,7 +58,7 @@ namespace mars
                     try
                     {
                         using SubControlItem = envire::core::Item<std::shared_ptr<SubControlCenter>>;
-                        envire::core::EnvireGraph::ItemIterator<SubControlItem> it = ControlCenter::envireGraph->getItem<SubControlItem>(frame);
+                        const auto& it = ControlCenter::envireGraph->getItem<SubControlItem>(frame);
                         return it->getData();
                     }
                     catch (...)
@@ -80,8 +80,8 @@ namespace mars
                 return;
             }
 
-            envire::base_types::geometry::Box& collidable = e.item->getData();
-            ConfigMap config{collidable.getFullConfigMap()};
+            auto& collidable = e.item->getData();
+            auto config = collidable.getFullConfigMap();
 
             config["extend"]["x"] = config["size"]["x"];
             config["extend"]["y"] = config["size"]["y"];
@@ -97,8 +97,8 @@ namespace mars
                 return;
             }
 
-            envire::base_types::geometry::Capsule& collidable = e.item->getData();
-            ConfigMap config{collidable.getFullConfigMap()};
+            auto& collidable = e.item->getData();
+            auto config = collidable.getFullConfigMap();
 
             LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::base_types::geometry::Capsule ");
 
@@ -112,8 +112,8 @@ namespace mars
                 return;
             }
 
-            envire::base_types::geometry::Cylinder& collidable = e.item->getData();
-            ConfigMap config{collidable.getFullConfigMap()};
+            auto& collidable = e.item->getData();
+            auto config = collidable.getFullConfigMap();
 
             config["extend"]["x"] = config["radius"];
             config["extend"]["y"] = config["length"];
@@ -128,8 +128,8 @@ namespace mars
                 return;
             }
 
-            envire::base_types::geometry::Mesh& collidable = e.item->getData();
-            ConfigMap config{collidable.getFullConfigMap()};
+            auto& collidable = e.item->getData();
+            auto config = collidable.getFullConfigMap();
 
             LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::base_types::geometry::Mesh ");
 
@@ -144,8 +144,8 @@ namespace mars
                 return;
             }
 
-            envire::base_types::geometry::Sphere& collidable = e.item->getData();
-            ConfigMap config{collidable.getFullConfigMap()};
+            auto& collidable = e.item->getData();
+            auto config = collidable.getFullConfigMap();
 
             config["extend"]["x"] = config["radius"];
 
@@ -154,7 +154,7 @@ namespace mars
 
         void EnvireOdeCollisionPlugins::createCollision(configmaps::ConfigMap &config, const envire::core::FrameId &frameId)
         {
-            std::shared_ptr<interfaces::SubControlCenter> subControl{getControlCenter(frameId)};
+            auto subControl = getControlCenter(frameId);
             if (!subControl)
             {
                 return;
@@ -167,10 +167,10 @@ namespace mars
             // TODO: we will not use prefix, when we move to base envire types
 
             LOG_INFO("Added smurf::Collidable item: %s", frameId.c_str());
-            // todo: check that we really have the frame in the map
-            const envire::core::GraphTraits::vertex_descriptor vertex{ControlCenter::envireGraph->vertex(frameId)};
-            envire::core::GraphTraits::vertex_descriptor parentVertex{ControlCenter::graphTreeView->tree[vertex].parent};
-            envire::core::FrameId parentFrame{ControlCenter::envireGraph->getFrameId(parentVertex)};
+            // TODO: check that we really have the frame in the map
+            const auto& vertex = ControlCenter::envireGraph->vertex(frameId);
+            const auto& parentVertex = ControlCenter::graphTreeView->tree[vertex].parent;
+            const auto parentFrame = ControlCenter::envireGraph->getFrameId(parentVertex);
 
             LOG_INFO("collision parent Frame: %s", parentFrame.c_str());
             // LOG_ERROR("parent Frame: %s", parentFrame.c_str());
@@ -190,9 +190,9 @@ namespace mars
 
             //config["parentFrame"] = parentFrame;
             // TODO: is DynamicObject meaningfull name? should it not bw PhysicObject?
-            std::shared_ptr<DynamicObject> parent{subControl->physics->getFrame(parentFrame)};
+            auto parent = subControl->physics->getFrame(parentFrame);
 
-            ode_collision::Object* collision{subControl->collision->createObject(config, parent)};
+            auto* const collision = subControl->collision->createObject(config, parent);
             if(!collision)
             {
                 LOG_ERROR("Error creating collision object!");
