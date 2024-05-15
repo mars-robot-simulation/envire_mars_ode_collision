@@ -15,11 +15,11 @@
 #include <envire_core/events/GraphEventDispatcher.hpp>
 #include <envire_core/events/GraphItemEventDispatcher.hpp>
 
-#include <envire_base_types/geometry/Box.hpp>
-#include <envire_base_types/geometry/Capsule.hpp>
-#include <envire_base_types/geometry/Cylinder.hpp>
-#include <envire_base_types/geometry/Mesh.hpp>
-#include <envire_base_types/geometry/Sphere.hpp>
+#include <envire_types/geometry/Box.hpp>
+#include <envire_types/geometry/Capsule.hpp>
+#include <envire_types/geometry/Cylinder.hpp>
+#include <envire_types/geometry/Mesh.hpp>
+#include <envire_types/geometry/Sphere.hpp>
 
 //TODO: add prismatic joint into base types and here
 
@@ -35,11 +35,11 @@ namespace mars
         // move the typedef to separate file
         class EnvireOdeCollisionPlugins : public lib_manager::LibInterface,
                                         public envire::core::GraphEventDispatcher,
-                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Box>>,
-                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Capsule>>,
-                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Cylinder>>,
-                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Mesh>>,
-                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Sphere>>
+                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Box>>,
+                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Capsule>>,
+                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Cylinder>>,
+                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Mesh>>,
+                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Sphere>>
 
         {
 
@@ -60,11 +60,11 @@ namespace mars
 
             CREATE_MODULE_INFO();
 
-            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Box>>& e) override;
-            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Capsule>>& e) override;
-            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Cylinder>>& e) override;
-            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Mesh>>& e) override;
-            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Sphere>>& e) override;
+            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Box>>& e) override;
+            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Capsule>>& e) override;
+            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Cylinder>>& e) override;
+            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Mesh>>& e) override;
+            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Sphere>>& e) override;
 
         private:
             // TODO: Move to central location

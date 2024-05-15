@@ -33,7 +33,7 @@ pkg_check_modules(PKGCONFIG REQUIRED
         mars_ode_physics
         mars_ode_collision
         envire_core
-        envire_base_types
+        envire_types
 )
 
 include_directories(${PKGCONFIG_INCLUDE_DIRS})

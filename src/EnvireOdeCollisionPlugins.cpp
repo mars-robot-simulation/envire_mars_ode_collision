@@ -31,11 +31,11 @@ namespace mars
         EnvireOdeCollisionPlugins::EnvireOdeCollisionPlugins(lib_manager::LibManager *theManager) :
             lib_manager::LibInterface{theManager}
         {
-            GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Box>>::subscribe(ControlCenter::envireGraph.get());
-            GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Capsule>>::subscribe(ControlCenter::envireGraph.get());
-            GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Cylinder>>::subscribe(ControlCenter::envireGraph.get());
-            GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Mesh>>::subscribe(ControlCenter::envireGraph.get());
-            GraphItemEventDispatcher<envire::core::Item<::envire::base_types::geometry::Sphere>>::subscribe(ControlCenter::envireGraph.get());
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Box>>::subscribe(ControlCenter::envireGraph.get());
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Capsule>>::subscribe(ControlCenter::envireGraph.get());
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Cylinder>>::subscribe(ControlCenter::envireGraph.get());
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Mesh>>::subscribe(ControlCenter::envireGraph.get());
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Sphere>>::subscribe(ControlCenter::envireGraph.get());
         }
 
         EnvireOdeCollisionPlugins::~EnvireOdeCollisionPlugins()
@@ -73,7 +73,7 @@ namespace mars
             return nullptr;
         }
 
-        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Box>>& e)
+        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Box>>& e)
         {
             if (e.item->getTag() != "collision")
             {
@@ -90,7 +90,7 @@ namespace mars
             createCollision(config, e.frame);
         }
 
-        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Capsule>>& e)
+        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Capsule>>& e)
         {
             if (e.item->getTag() != "collision")
             {
@@ -100,12 +100,12 @@ namespace mars
             auto& collidable = e.item->getData();
             auto config = collidable.getFullConfigMap();
 
-            LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::base_types::geometry::Capsule ");
+            LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::types::geometry::Capsule ");
 
             createCollision(config, e.frame);
         }
 
-        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Cylinder>>& e)
+        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Cylinder>>& e)
         {
             if (e.item->getTag() != "collision")
             {
@@ -121,7 +121,7 @@ namespace mars
             createCollision(config, e.frame);
         }
 
-        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Mesh>>& e)
+        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Mesh>>& e)
         {
             if (e.item->getTag() != "collision")
             {
@@ -131,13 +131,13 @@ namespace mars
             auto& collidable = e.item->getData();
             auto config = collidable.getFullConfigMap();
 
-            LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::base_types::geometry::Mesh ");
+            LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::types::geometry::Mesh ");
 
             // TODO: Implement creating collision?!
             // createCollision(config, e.frame);
         }
 
-        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::base_types::geometry::Sphere>>& e)
+        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Sphere>>& e)
         {
             if (e.item->getTag() != "collision")
             {
