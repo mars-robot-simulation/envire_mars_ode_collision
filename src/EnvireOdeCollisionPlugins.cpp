@@ -39,8 +39,7 @@ namespace mars
         }
 
         EnvireOdeCollisionPlugins::~EnvireOdeCollisionPlugins()
-        {
-        }
+        {}
 
         // TODO: this should be moved out from here
         std::shared_ptr<SubControlCenter> EnvireOdeCollisionPlugins::getControlCenter(envire::core::FrameId frame)
@@ -185,11 +184,10 @@ namespace mars
             } else {
                 // TODO: for some reason bitmask after loading smurf is not a number, but string
                 // need to be checked
-                config["bitmask"] = (int)config["bitmask"];
+                config["bitmask"] = static_cast<int>(config["bitmask"]);
             }
 
             //config["parentFrame"] = parentFrame;
-            // TODO: is DynamicObject meaningfull name? should it not bw PhysicObject?
             auto parent = subControl->physics->getFrame(parentFrame);
 
             auto* const collision = subControl->collision->createObject(config, parent);
@@ -199,15 +197,15 @@ namespace mars
                 return;
             }
             // TODO: check hirarchy issues with closed loops
-            const envire::core::Transform t{ControlCenter::envireGraph->getTransform(parentVertex, vertex)};
+            const auto t = envire::core::Transform{ControlCenter::envireGraph->getTransform(parentVertex, vertex)};
             collision->setPosition(t.transform.translation);
             collision->setRotation(t.transform.orientation);
 
             // store the collision physic object in the graph
             // TODO: this is just quick implementation
             // TODO: add interface for CollisionObject how it was done for DynamicObject
-            std::shared_ptr<ode_collision::Object> collisionPtr{collision};
-            envire::core::Item<std::shared_ptr<ode_collision::Object>>::Ptr collisionItemPtr{new envire::core::Item<std::shared_ptr<ode_collision::Object>>{collisionPtr}};
+            const auto collisionPtr = std::shared_ptr<ode_collision::Object>{collision};
+            const auto collisionItemPtr = envire::core::Item<std::shared_ptr<ode_collision::Object>>::Ptr{new envire::core::Item<std::shared_ptr<ode_collision::Object>>{collisionPtr}};
             ControlCenter::envireGraph->addItemToFrame(frameId, collisionItemPtr);
         }
 
