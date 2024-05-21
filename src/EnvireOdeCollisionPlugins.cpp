@@ -169,7 +169,7 @@ namespace mars
             // TODO: check that we really have the frame in the map
             const auto& vertex = ControlCenter::envireGraph->vertex(frameId);
             const auto& parentVertex = ControlCenter::graphTreeView->tree[vertex].parent;
-            const auto parentFrame = ControlCenter::envireGraph->getFrameId(parentVertex);
+            const auto& parentFrame = ControlCenter::envireGraph->getFrameId(parentVertex);
 
             LOG_INFO("collision parent Frame: %s", parentFrame.c_str());
             // LOG_ERROR("parent Frame: %s", parentFrame.c_str());
@@ -181,7 +181,9 @@ namespace mars
             if (!config.hasKey("bitmask"))
             {
                 config["bitmask"] = std::numeric_limits<uint16_t>::max(); // == 65535
-            } else {
+            }
+            else
+            {
                 // TODO: for some reason bitmask after loading smurf is not a number, but string
                 // need to be checked
                 config["bitmask"] = static_cast<int>(config["bitmask"]);
@@ -197,7 +199,7 @@ namespace mars
                 return;
             }
             // TODO: check hirarchy issues with closed loops
-            const auto t = envire::core::Transform{ControlCenter::envireGraph->getTransform(parentVertex, vertex)};
+            const auto& t = ControlCenter::envireGraph->getTransform(parentVertex, vertex);
             collision->setPosition(t.transform.translation);
             collision->setRotation(t.transform.orientation);
 
