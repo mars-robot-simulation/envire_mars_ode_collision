@@ -20,6 +20,7 @@
 
 #include <mars_ode_collision/CollisionSpace.hpp>
 #include <mars_ode_collision/objects/Object.hpp>
+#include <mars_ode_collision/objects/Mesh.hpp>
 
 
 namespace mars
@@ -130,10 +131,10 @@ namespace mars
             auto& collidable = e.item->getData();
             auto config = collidable.getFullConfigMap();
 
-            LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::types::geometry::Mesh ");
+            //LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::types::geometry::Mesh ");
 
             // TODO: Implement creating collision?!
-            // createCollision(config, e.frame);
+            createCollision(config, e.frame);
         }
 
         void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Sphere>>& e)
@@ -198,6 +199,17 @@ namespace mars
                 LOG_ERROR("Error creating collision object!");
                 return;
             }
+
+            // add mesh data handling; todo: move to collsion library itself
+            if(config["physicstype"] == "mesh")
+            {
+                NodeData node;
+                node.fromConfigMap(&config, "");
+                ControlCenter::loadCenter->loadMesh->getPhysicsFromMesh(&node);
+                ((ode_collision::Mesh*)collision)->setMeshData(node.mesh);
+                collision->createGeom();
+            }
+
             // TODO: check hirarchy issues with closed loops
             const auto& t = ControlCenter::envireGraph->getTransform(parentVertex, vertex);
             collision->setPosition(t.transform.translation);
