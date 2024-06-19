@@ -201,12 +201,24 @@ namespace mars
             }
 
             // add mesh data handling; todo: move to collsion library itself
-            if(config["physicstype"] == "mesh")
+            if(config["type"] == "mesh")
             {
                 NodeData node;
+                if(!config.hasKey("extend"))
+                {
+                    config["loadSizeFromMesh"] = true;
+                    if(config.hasKey("scale"))
+                    {
+                        config["physicalScale"] = config["scale"];
+                    }
+                }
+                //fprintf(stderr, "%s\n", config.toYamlString().c_str());
                 node.fromConfigMap(&config, "");
                 ControlCenter::loadCenter->loadMesh->getPhysicsFromMesh(&node);
                 ((ode_collision::Mesh*)collision)->setMeshData(node.mesh);
+                config["extend"]["x"] = node.ext.x();
+                config["extend"]["y"] = node.ext.y();
+                config["extend"]["z"] = node.ext.z();
                 collision->createGeom();
             }
 
