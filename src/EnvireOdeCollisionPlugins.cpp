@@ -32,6 +32,7 @@ namespace mars
         EnvireOdeCollisionPlugins::EnvireOdeCollisionPlugins(lib_manager::LibManager *theManager) :
             lib_manager::LibInterface{theManager}
         {
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Plane>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Box>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Capsule>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Cylinder>>::subscribe(ControlCenter::envireGraph.get());
@@ -71,6 +72,22 @@ namespace mars
                 }
             }
             return nullptr;
+        }
+
+        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Plane>>& e)
+        {
+            if (e.item->getTag() != "collision")
+            {
+                return;
+            }
+
+            auto& collidable = e.item->getData();
+            auto config = collidable.getFullConfigMap();
+
+            config["extend"]["x"] = config["size"]["x"];
+            config["extend"]["y"] = config["size"]["y"];
+
+            createCollision(config, e.frame);
         }
 
         void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Box>>& e)
