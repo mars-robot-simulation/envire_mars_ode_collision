@@ -21,6 +21,7 @@
 #include <mars_ode_collision/CollisionSpace.hpp>
 #include <mars_ode_collision/objects/Object.hpp>
 #include <mars_ode_collision/objects/Mesh.hpp>
+#include <mars_ode_collision/objects/Heightfield.hpp>
 
 
 namespace mars
@@ -32,6 +33,7 @@ namespace mars
         EnvireOdeCollisionPlugins::EnvireOdeCollisionPlugins(lib_manager::LibManager *theManager) :
             lib_manager::LibInterface{theManager}
         {
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Heightfield>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Plane>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Box>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Capsule>>::subscribe(ControlCenter::envireGraph.get());
@@ -72,6 +74,19 @@ namespace mars
                 }
             }
             return nullptr;
+        }
+
+        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Heightfield>>& e)
+        {
+            if (e.item->getTag() != "collision")
+            {
+                return;
+            }
+
+            auto& collidable = e.item->getData();
+            auto config = collidable.getFullConfigMap();
+
+            createCollision(config, e.frame);
         }
 
         void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Plane>>& e)
@@ -233,6 +248,24 @@ namespace mars
                 config["extend"]["z"] = node.ext.z();
                 collision->createGeom();
             }
+
+            if(config["type"] == "heightfield")
+            {
+                NodeData node;
+                node.fromConfigMap(&config, "");
+
+                // check physics type:
+                if(node.terrain)
+                {
+                    ((ode_collision::Heightfield*)collision)->setTerrainStrcut(node.terrain);
+                    if(!collision->createGeom())
+                    {
+                        LOG_ERROR("Error creating Heightfield geom!");
+                        return;
+                    }
+                }
+            }
+
 
             // TODO: check hirarchy issues with closed loops
             const auto& t = ControlCenter::envireGraph->getTransform(parentVertex, vertex);
