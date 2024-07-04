@@ -117,8 +117,6 @@ namespace mars
             auto& collidable = e.item->getData();
             auto config = collidable.getFullConfigMap();
 
-            LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::types::geometry::Capsule ");
-
             createCollision(config, e.frame);
         }
 
@@ -148,9 +146,6 @@ namespace mars
             auto& collidable = e.item->getData();
             auto config = collidable.getFullConfigMap();
 
-            //LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::types::geometry::Mesh ");
-
-            // TODO: Implement creating collision?!
             createCollision(config, e.frame);
         }
 
