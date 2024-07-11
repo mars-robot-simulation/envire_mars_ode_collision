@@ -257,6 +257,21 @@ namespace mars
                 // check physics type:
                 if(node.terrain)
                 {
+                    if(!node.terrain->pixelData)
+                    {
+                        LOG_INFO("Load heightmap pixelData...");
+                        //nodeData.terrain = new(terrainStruct);
+                        // TODO: add proper path handling
+                        node.terrain->srcname = config["filePrefix"].toString() + "/" + node.terrain->srcname;
+                        LOG_INFO(node.terrain->srcname.c_str());
+                        ControlCenter::loadCenter->loadHeightmap->readPixelData(node.terrain);
+                        if(!node.terrain->pixelData)
+                        {
+                            LOG_ERROR("NodeManager::addNode: could not load image for terrain");
+                        }
+                    }
+
+
                     ((ode_collision::Heightfield*)collision)->setTerrainStrcut(node.terrain);
                     if(!collision->createGeom())
                     {
