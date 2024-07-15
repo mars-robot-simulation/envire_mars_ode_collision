@@ -15,6 +15,8 @@
 #include <envire_core/events/GraphEventDispatcher.hpp>
 #include <envire_core/events/GraphItemEventDispatcher.hpp>
 
+#include <envire_types/geometry/Heightfield.hpp>
+#include <envire_types/geometry/Plane.hpp>
 #include <envire_types/geometry/Box.hpp>
 #include <envire_types/geometry/Capsule.hpp>
 #include <envire_types/geometry/Cylinder.hpp>
@@ -35,6 +37,8 @@ namespace mars
         // move the typedef to separate file
         class EnvireOdeCollisionPlugins : public lib_manager::LibInterface,
                                         public envire::core::GraphEventDispatcher,
+                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Heightfield>>,
+                                        public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Plane>>,
                                         public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Box>>,
                                         public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Capsule>>,
                                         public envire::core::GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Cylinder>>,
@@ -60,6 +64,8 @@ namespace mars
 
             CREATE_MODULE_INFO();
 
+            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Heightfield>>& e) override;
+            virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Plane>>& e) override;
             virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Box>>& e) override;
             virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Capsule>>& e) override;
             virtual void itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Cylinder>>& e) override;

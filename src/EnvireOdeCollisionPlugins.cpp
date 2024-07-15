@@ -21,6 +21,7 @@
 #include <mars_ode_collision/CollisionSpace.hpp>
 #include <mars_ode_collision/objects/Object.hpp>
 #include <mars_ode_collision/objects/Mesh.hpp>
+#include <mars_ode_collision/objects/Heightfield.hpp>
 
 
 namespace mars
@@ -32,6 +33,8 @@ namespace mars
         EnvireOdeCollisionPlugins::EnvireOdeCollisionPlugins(lib_manager::LibManager *theManager) :
             lib_manager::LibInterface{theManager}
         {
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Heightfield>>::subscribe(ControlCenter::envireGraph.get());
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Plane>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Box>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Capsule>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Cylinder>>::subscribe(ControlCenter::envireGraph.get());
@@ -73,6 +76,35 @@ namespace mars
             return nullptr;
         }
 
+        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Heightfield>>& e)
+        {
+            if (e.item->getTag() != "collision")
+            {
+                return;
+            }
+
+            auto& collidable = e.item->getData();
+            auto config = collidable.getFullConfigMap();
+
+            createCollision(config, e.frame);
+        }
+
+        void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Plane>>& e)
+        {
+            if (e.item->getTag() != "collision")
+            {
+                return;
+            }
+
+            auto& collidable = e.item->getData();
+            auto config = collidable.getFullConfigMap();
+
+            config["extend"]["x"] = config["size"]["x"];
+            config["extend"]["y"] = config["size"]["y"];
+
+            createCollision(config, e.frame);
+        }
+
         void EnvireOdeCollisionPlugins::itemAdded(const envire::core::TypedItemAddedEvent<envire::core::Item<::envire::types::geometry::Box>>& e)
         {
             if (e.item->getTag() != "collision")
@@ -99,8 +131,6 @@ namespace mars
 
             auto& collidable = e.item->getData();
             auto config = collidable.getFullConfigMap();
-
-            LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::types::geometry::Capsule ");
 
             createCollision(config, e.frame);
         }
@@ -131,9 +161,6 @@ namespace mars
             auto& collidable = e.item->getData();
             auto config = collidable.getFullConfigMap();
 
-            //LOG_ERROR(" NO COLLISION IS IMPLEMENTED FOR TYPE envire::types::geometry::Mesh ");
-
-            // TODO: Implement creating collision?!
             createCollision(config, e.frame);
         }
 
@@ -221,6 +248,39 @@ namespace mars
                 config["extend"]["z"] = node.ext.z();
                 collision->createGeom();
             }
+
+            if(config["type"] == "heightfield")
+            {
+                NodeData node;
+                node.fromConfigMap(&config, "");
+
+                // check physics type:
+                if(node.terrain)
+                {
+                    if(!node.terrain->pixelData)
+                    {
+                        LOG_INFO("Load heightmap pixelData...");
+                        //nodeData.terrain = new(terrainStruct);
+                        // TODO: add proper path handling
+                        node.terrain->srcname = config["filePrefix"].toString() + "/" + node.terrain->srcname;
+                        LOG_INFO(node.terrain->srcname.c_str());
+                        ControlCenter::loadCenter->loadHeightmap->readPixelData(node.terrain);
+                        if(!node.terrain->pixelData)
+                        {
+                            LOG_ERROR("NodeManager::addNode: could not load image for terrain");
+                        }
+                    }
+
+
+                    ((ode_collision::Heightfield*)collision)->setTerrainStrcut(node.terrain);
+                    if(!collision->createGeom())
+                    {
+                        LOG_ERROR("Error creating Heightfield geom!");
+                        return;
+                    }
+                }
+            }
+
 
             // TODO: check hirarchy issues with closed loops
             const auto& t = ControlCenter::envireGraph->getTransform(parentVertex, vertex);
