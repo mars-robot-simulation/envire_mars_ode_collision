@@ -267,7 +267,7 @@ namespace mars
                         }
                     }
 
-                    ((ode_collision::Heightfield*)collision)->setTerrainStruct(node.terrain);
+                    ((ode_collision::Heightfield*)collision)->setTerrainStrcut(node.terrain);
                     if(!collision->createGeom())
                     {
                         LOG_ERROR("Error creating Heightfield geom!");
