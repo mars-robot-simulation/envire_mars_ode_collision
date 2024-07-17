@@ -242,7 +242,7 @@ namespace mars
                 //fprintf(stderr, "%s\n", config.toYamlString().c_str());
                 node.fromConfigMap(&config, config["filePrefix"].toString());
                 ControlCenter::loadCenter->loadMesh->getPhysicsFromMesh(&node);
-                ((ode_collision::Mesh*)collision)->setMeshData(node.mesh);
+                dynamic_cast<ode_collision::Mesh*>(collision)->setMeshData(node.mesh);
                 config["extend"]["x"] = node.ext.x();
                 config["extend"]["y"] = node.ext.y();
                 config["extend"]["z"] = node.ext.z();
@@ -267,7 +267,7 @@ namespace mars
                         }
                     }
 
-                    ((ode_collision::Heightfield*)collision)->setTerrainStrcut(node.terrain);
+                    dynamic_cast<ode_collision::Heightfield*>(collision)->setTerrainStrcut(node.terrain);
                     if(!collision->createGeom())
                     {
                         LOG_ERROR("Error creating Heightfield geom!");
