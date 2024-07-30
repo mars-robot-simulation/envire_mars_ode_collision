@@ -227,7 +227,7 @@ namespace mars
                 return;
             }
 
-            // add mesh data handling; todo: move to collsion library itself
+            // add mesh data handling; TODO: move to collsion library itself
             if(config["type"] == "mesh")
             {
                 NodeData node;
@@ -267,7 +267,7 @@ namespace mars
                         }
                     }
 
-                    dynamic_cast<ode_collision::Heightfield*>(collision)->setTerrainStrcut(node.terrain);
+                    dynamic_cast<ode_collision::Heightfield*>(collision)->setTerrainStruct(node.terrain);
                     if(!collision->createGeom())
                     {
                         LOG_ERROR("Error creating Heightfield geom!");
