@@ -242,11 +242,24 @@ namespace mars
                 //fprintf(stderr, "%s\n", config.toYamlString().c_str());
                 node.fromConfigMap(&config, config["filePrefix"].toString());
                 ControlCenter::loadCenter->loadMesh->getPhysicsFromMesh(&node);
-                dynamic_cast<ode_collision::Mesh*>(collision)->setMeshData(node.mesh);
+                dynamic_cast<ode_collision::Mesh*>(collision)->setMeshData(node.mesh); // This copies the vertices
                 config["extend"]["x"] = node.ext.x();
                 config["extend"]["y"] = node.ext.y();
                 config["extend"]["z"] = node.ext.z();
                 collision->createGeom();
+
+                // node runs out of scope and vertices as well as indicies would be leaked.
+                // TODO: Find clean solution; snmesh should be more robust.
+                if(node.mesh.vertices)
+                {
+                    delete[] node.mesh.vertices;
+                    node.mesh.vertices = nullptr;
+                }
+                if(node.mesh.indices)
+                {
+                    delete[] node.mesh.indices;
+                    node.mesh.indices = nullptr;
+                }
             }
 
             if(config["type"] == "heightfield")
