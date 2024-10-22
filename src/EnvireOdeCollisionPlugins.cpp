@@ -219,8 +219,8 @@ namespace mars
 
             //config["parentFrame"] = parentFrame;
             auto parent = subControl->physics->getFrame(parentFrame);
-
             auto* const collision = subControl->collision->createObject(config, parent);
+
             if(!collision)
             {
                 LOG_ERROR("Error creating collision object!");
@@ -289,11 +289,17 @@ namespace mars
                 }
             }
 
-
-            // TODO: check hirarchy issues with closed loops
-            const auto& t = ControlCenter::envireGraph->getTransform(parentVertex, vertex);
-            collision->setPosition(t.transform.translation);
-            collision->setRotation(t.transform.orientation);
+           if (!parent){
+                const auto& t = ControlCenter::envireGraph->getTransform(SIM_CENTER_FRAME_NAME, frameId);
+                collision->setPosition(t.transform.translation);
+                collision->setRotation(t.transform.orientation);   
+            }
+            else{
+                // TODO: check hirarchy issues with closed loops
+                const auto& t = ControlCenter::envireGraph->getTransform(parentVertex, vertex);
+                collision->setPosition(t.transform.translation);
+                collision->setRotation(t.transform.orientation);                
+            }
 
             // store the collision physic object in the graph
             // TODO: this is just quick implementation
