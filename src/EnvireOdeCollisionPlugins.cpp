@@ -217,9 +217,8 @@ namespace mars
                 config["bitmask"] = static_cast<int>(config["bitmask"]);
             }
 
-            //config["parentFrame"] = parentFrame;
-            auto parent = subControl->physics->getFrame(parentFrame);
-            auto* const collision = subControl->collision->createObject(config, parent);
+            auto parentsDynamicObject = subControl->physics->getFrame(parentFrame);
+            auto* const collision = subControl->collision->createObject(config, parentsDynamicObject);
 
             if(!collision)
             {
@@ -289,17 +288,14 @@ namespace mars
                 }
             }
 
-           if (!parent){
-                const auto& t = ControlCenter::envireGraph->getTransform(SIM_CENTER_FRAME_NAME, frameId);
-                collision->setPosition(t.transform.translation);
-                collision->setRotation(t.transform.orientation);   
-            }
-            else{
-                // TODO: check hirarchy issues with closed loops
-                const auto& t = ControlCenter::envireGraph->getTransform(parentVertex, vertex);
-                collision->setPosition(t.transform.translation);
-                collision->setRotation(t.transform.orientation);                
-            }
+            // Set position and rotation of the created collision object
+            // @transformOriginFrame: If the global transformation to the collision object depends on the global transformation of another object (e.g. a leg of a robotic system),
+            //                        the local transformation to that other object needs to be set. Otherwise the global transformation to the object needs to be set.
+            const bool hasDynamicObjectParent = parentsDynamicObject!=nullptr;
+            const auto& transformOriginFrame = hasDynamicObjectParent ? parentFrame : SIM_CENTER_FRAME_NAME;
+            const auto& t = ControlCenter::envireGraph->getTransform(transformOriginFrame, frameId);
+            collision->setPosition(t.transform.translation);
+            collision->setRotation(t.transform.orientation);
 
             // store the collision physic object in the graph
             // TODO: this is just quick implementation
