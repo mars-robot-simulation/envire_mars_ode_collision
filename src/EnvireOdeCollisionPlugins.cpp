@@ -33,6 +33,7 @@ namespace mars
         EnvireOdeCollisionPlugins::EnvireOdeCollisionPlugins(lib_manager::LibManager *theManager) :
             lib_manager::LibInterface{theManager}
         {
+            libManager->acquireLibrary("mars_core");
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Heightfield>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Plane>>::subscribe(ControlCenter::envireGraph.get());
             GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Box>>::subscribe(ControlCenter::envireGraph.get());
@@ -43,7 +44,18 @@ namespace mars
         }
 
         EnvireOdeCollisionPlugins::~EnvireOdeCollisionPlugins()
-        {}
+        {
+            // unsubscribe from envire graph
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Heightfield>>::unsubscribe();
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Plane>>::unsubscribe();
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Box>>::unsubscribe();
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Capsule>>::unsubscribe();
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Cylinder>>::unsubscribe();
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Mesh>>::unsubscribe();
+            GraphItemEventDispatcher<envire::core::Item<::envire::types::geometry::Sphere>>::unsubscribe();
+
+            libManager->releaseLibrary("mars_core");
+        }
 
         // TODO: this should be moved out from here
         std::shared_ptr<SubControlCenter> EnvireOdeCollisionPlugins::getControlCenter(envire::core::FrameId frame)
