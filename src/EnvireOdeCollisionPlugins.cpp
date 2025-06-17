@@ -229,34 +229,54 @@ namespace mars
                 config["bitmask"] = static_cast<int>(config["bitmask"]);
             }
 
-            auto parentsDynamicObject = subControl->physics->getFrame(parentFrame);
-            auto* const collision = subControl->collision->createObject(config, parentsDynamicObject);
-
-            if(!collision)
-            {
-                LOG_ERROR("Error creating collision object!");
-                return;
-            }
-
+            NodeData node;
             // add mesh data handling; TODO: move to collsion library itself
             if(config["type"] == "mesh")
             {
-                NodeData node;
                 if(!config.hasKey("extend"))
                 {
                     config["loadSizeFromMesh"] = true;
                     if(config.hasKey("scale"))
                     {
                         config["physicalScale"] = config["scale"];
+                    } else
+                    {
+                        config["physicalScale"]["x"] = 1.0;
+                        config["physicalScale"]["y"] = 1.0;
+                        config["physicalScale"]["z"] = 1.0;
                     }
                 }
-                //fprintf(stderr, "%s\n", config.toYamlString().c_str());
                 node.fromConfigMap(&config, config["filePrefix"].toString());
                 ControlCenter::loadCenter->loadMesh->getPhysicsFromMesh(&node);
-                dynamic_cast<ode_collision::Mesh*>(collision)->setMeshData(node.mesh); // This copies the vertices
                 config["extend"]["x"] = node.ext.x();
                 config["extend"]["y"] = node.ext.y();
                 config["extend"]["z"] = node.ext.z();
+            }
+
+            auto parentsDynamicObject = subControl->physics->getFrame(parentFrame);
+            auto* const collision = subControl->collision->createObject(config, parentsDynamicObject);
+
+            if(!collision)
+            {
+                LOG_ERROR("Error creating collision object!");
+                // node runs out of scope and vertices as well as indicies would be leaked.
+                // TODO: Find clean solution; snmesh should be more robust.
+                if(node.mesh.vertices)
+                {
+                    delete[] node.mesh.vertices;
+                    node.mesh.vertices = nullptr;
+                }
+                if(node.mesh.indices)
+                {
+                    delete[] node.mesh.indices;
+                    node.mesh.indices = nullptr;
+                }
+                return;
+            }
+
+            if(config["type"] == "mesh")
+            {
+                dynamic_cast<ode_collision::Mesh*>(collision)->setMeshData(node.mesh); // This copies the vertices
                 collision->createGeom();
 
                 // node runs out of scope and vertices as well as indicies would be leaked.
